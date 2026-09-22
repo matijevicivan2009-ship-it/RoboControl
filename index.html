@@ -1,83 +1,15 @@
 <!doctype html>
 <html lang="hr">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#0b1220">
-<title>RoboControl | Simulator robotske ruke</title>
-<link rel="stylesheet" href="style.css">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#07111f">
+<title>RoboControl 2.0 | 3D robotska ruka</title><link rel="stylesheet" href="style.css">
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.186.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.186.0/examples/jsm/"}}</script>
 </head>
 <body>
-<nav>
-  <a class="brand" href="#home">🤖 RoboControl</a>
-  <div class="navlinks">
-    <a href="#simulator">Simulator</a><a href="#theory">Kako radi</a><a href="#about">O projektu</a>
-  </div>
-</nav>
-
-<header id="home" class="hero">
-  <div>
-    <span class="badge">Završni rad • Elektronika i robotika</span>
-    <h1>Simulator robotske ruke</h1>
-    <p>Interaktivna web-aplikacija za upravljanje 2D robotskom rukom i demonstraciju osnovne direktne kinematike.</p>
-    <a class="cta" href="#simulator">Pokreni simulator</a>
-  </div>
-  <div class="hero-card">
-    <div>3 zgloba</div><div>Direktna kinematika</div><div>Demo sekvenca</div><div>Responsive dizajn</div>
-  </div>
-</header>
-
-<main>
-<section id="simulator" class="section">
-  <div class="section-title"><span>01</span><div><h2>RoboControl simulator</h2><p>Pomiči klizače i prati položaj robotske ruke u stvarnom vremenu.</p></div></div>
-  <div class="sim-grid">
-    <div class="panel canvas-panel">
-      <canvas id="robot" width="720" height="560"></canvas>
-      <div class="stats">
-        <div><small>X položaj</small><strong id="xPos">0</strong></div>
-        <div><small>Y položaj</small><strong id="yPos">0</strong></div>
-        <div><small>Doseg</small><strong id="reach">0</strong></div>
-      </div>
-    </div>
-    <div class="panel controls">
-      <div class="control"><div><label>Baza</label><output id="baseVal">0°</output></div><input id="base" type="range" min="-45" max="45" value="0"></div>
-      <div class="control"><div><label>Rame</label><output id="shoulderVal">55°</output></div><input id="shoulder" type="range" min="10" max="160" value="55"></div>
-      <div class="control"><div><label>Lakat</label><output id="elbowVal">55°</output></div><input id="elbow" type="range" min="-130" max="130" value="55"></div>
-      <div class="control"><div><label>Hvataljka</label><output id="gripVal">40%</output></div><input id="grip" type="range" min="0" max="100" value="40"></div>
-      <div class="buttons">
-        <button id="open">Otvori</button><button id="close">Zatvori</button>
-        <button class="secondary" id="save">Spremi položaj</button><button class="secondary" id="reset">Reset</button>
-        <button class="wide" id="demo">▶ Demo pokret</button>
-      </div>
-      <div class="saved"><h3>Spremljeni položaji</h3><div id="savedPositions"><p class="muted">Još nema spremljenih položaja.</p></div></div>
-    </div>
-  </div>
-</section>
-
-<section id="theory" class="section">
-  <div class="section-title"><span>02</span><div><h2>Kako simulator radi?</h2><p>Osnovni koncepti koji povezuju aplikaciju s robotikom i elektronikom.</p></div></div>
-  <div class="cards">
-    <article><h3>⚙️ Zglobovi</h3><p>Robotska ruka ima rotacijske zglobove. U stvarnom sustavu njih najčešće pokreću servo motori, a aplikacija simulira promjenu njihovih kutova.</p></article>
-    <article><h3>📐 Kinematika</h3><p>Položaj vrha izračunava se iz duljina članaka i kutova zglobova. To se naziva direktna kinematika.</p></article>
-    <article><h3>🦾 Hvataljka</h3><p>Klizač hvataljke simulira otvaranje i zatvaranje završnog izvršnog elementa kojim robot može prihvatiti predmet.</p></article>
-  </div>
-  <div class="formula panel">
-    <h3>Osnovne formule</h3>
-    <p>x = L₁ cos(θ₁) + L₂ cos(θ₁ + θ₂)</p>
-    <p>y = L₁ sin(θ₁) + L₂ sin(θ₁ + θ₂)</p>
-    <small>U simulatoru su L₁ i L₂ duljine dvaju glavnih članaka robotske ruke.</small>
-  </div>
-</section>
-
-<section id="about" class="section">
-  <div class="section-title"><span>03</span><div><h2>O projektu</h2><p>Web-aplikacija izrađena kao demonstracijski dio završnog rada.</p></div></div>
-  <div class="about panel">
-    <p><strong>RoboControl</strong> prikazuje osnovni princip upravljanja robotskom rukom bez potrebe za fizičkim robotom. Korisnik može mijenjati kutove zglobova, upravljati hvataljkom, spremiti položaje i pokrenuti automatsku demonstraciju.</p>
-    <p>Projekt je izrađen pomoću <strong>HTML-a, CSS-a i JavaScripta</strong> te radi izravno u modernom web-pregledniku na računalu i mobitelu.</p>
-  </div>
-</section>
-</main>
-<footer>RoboControl • Edukacijski projekt iz robotike</footer>
-<script src="app.js"></script>
-</body>
-</html>
+<nav><a class="brand" href="#home">🤖 <b>RoboControl <em>2.0</em></b></a><div class="navlinks"><a href="#simulator">3D Simulator</a><a href="#theory">Kako radi</a><a href="#about">O projektu</a></div></nav>
+<header id="home" class="hero"><div><span class="badge">Završni rad • Elektronika i robotika</span><h1>3D simulator<br>robotske ruke</h1><p>Interaktivno upravljanje 3D robotskom rukom, prikaz X/Y/Z koordinata završne točke, spremanje položaja i automatska demo sekvenca.</p><a class="cta" href="#simulator">Pokreni 3D simulator</a></div><div class="hero-card"><div>🦾 3D model</div><div>📍 X / Y / Z</div><div>🎮 Interaktivne kontrole</div><div>💾 Spremanje položaja</div></div></header>
+<main><section id="simulator" class="section"><div class="section-title"><span>01</span><div><h2>RoboControl 2.0</h2><p>Pomiči klizače. Prstom ili mišem okreći kameru oko robota, a s dva prsta zumiraj.</p></div></div>
+<div class="sim-grid"><div class="panel canvas-panel"><div id="robot3d"></div><div class="axis-hint">X <b>crveno</b> • Y <b>zeleno</b> • Z <b>plavo</b></div><div class="stats"><div><small>X koordinata</small><strong id="xPos">0 mm</strong></div><div><small>Y koordinata</small><strong id="yPos">0 mm</strong></div><div><small>Z koordinata</small><strong id="zPos">0 mm</strong></div><div><small>Doseg</small><strong id="reach">0 mm</strong></div></div></div>
+<div class="panel controls"><div class="control"><div><label>Baza</label><output id="baseVal">0°</output></div><input id="base" type="range" min="-180" max="180" value="0"></div><div class="control"><div><label>Rame</label><output id="shoulderVal">55°</output></div><input id="shoulder" type="range" min="10" max="150" value="55"></div><div class="control"><div><label>Lakat</label><output id="elbowVal">55°</output></div><input id="elbow" type="range" min="-120" max="120" value="55"></div><div class="control"><div><label>Hvataljka</label><output id="gripVal">40%</output></div><input id="grip" type="range" min="0" max="100" value="40"></div><div class="buttons"><button id="open">Otvori</button><button id="close">Zatvori</button><button class="secondary" id="save">Spremi položaj</button><button class="secondary" id="reset">Reset</button><button class="wide" id="demo">▶ Demo pokret</button></div><div class="saved"><h3>Spremljeni položaji</h3><div id="savedPositions"><p class="muted">Još nema spremljenih položaja.</p></div></div></div></div></section>
+<section id="theory" class="section"><div class="section-title"><span>02</span><div><h2>Kako 3D simulator radi?</h2><p>Model povezuje kutove zglobova s položajem hvataljke u prostoru.</p></div></div><div class="cards"><article><h3>⚙️ Zglobovi</h3><p>Baza rotira cijelu ruku, dok rame i lakat mijenjaju položaj članaka. Klizači odmah mijenjaju 3D model.</p></article><article><h3>📐 3D kinematika</h3><p>Iz kutova i duljina članaka računa se položaj završne točke robota u koordinatnom sustavu X, Y i Z.</p></article><article><h3>🦾 Hvataljka</h3><p>Klizač mijenja razmak prstiju hvataljke i simulira prihvat predmeta.</p></article></div><div class="formula panel"><h3>Pojednostavljene formule</h3><p>r = L₁ cos(θ₁) + L₂ cos(θ₁ + θ₂)</p><p>X = r sin(θ₀) &nbsp; • &nbsp; Z = r cos(θ₀)</p><p>Y = H + L₁ sin(θ₁) + L₂ sin(θ₁ + θ₂)</p></div></section>
+<section id="about" class="section"><div class="section-title"><span>03</span><div><h2>O projektu</h2><p>Web-aplikacija izrađena kao demonstracijski dio završnog rada.</p></div></div><div class="about panel"><p><strong>RoboControl 2.0</strong> prikazuje princip upravljanja robotskom rukom bez fizičkog robota. Korisnik upravlja zglobovima, hvataljkom, prati X/Y/Z koordinate, sprema položaje i pokreće demo.</p><p>Projekt koristi <strong>HTML, CSS, JavaScript i Three.js</strong> i pripremljen je za GitHub Pages.</p></div></section></main><footer>RoboControl 2.0 • Edukacijski projekt iz robotike</footer><script type="module" src="app.js"></script></body></html>

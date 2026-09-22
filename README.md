@@ -1,26 +1,5 @@
-# RoboControl
-
-RoboControl je edukacijska web-aplikacija za simulaciju 2D robotske ruke.
-
-## Funkcije
-- upravljanje bazom, ramenom i laktom
-- otvaranje i zatvaranje hvataljke
-- prikaz X/Y položaja i dosega
-- spremanje i ponovno učitavanje položaja
-- automatski demo pokret
-- prikaz osnovne direktne kinematike
-- prilagođen prikaz za mobitel i računalo
-
-## Pokretanje
-Otvori `index.html` u web-pregledniku.
+# RoboControl 2.0
+Interaktivni 3D simulator robotske ruke za završni rad. Sadrži 3D prikaz, upravljanje bazom/ramenom/laktom/hvataljkom, X/Y/Z koordinate, spremanje položaja i demo pokret.
 
 ## GitHub Pages
-1. Napravi novi GitHub repository.
-2. Uploadaj `index.html`, `style.css` i `app.js` u glavni direktorij.
-3. Otvori **Settings → Pages**.
-4. Pod **Build and deployment** odaberi **Deploy from a branch**.
-5. Odaberi branch **main** i folder **/(root)** pa klikni **Save**.
-6. Nakon objave GitHub će prikazati javnu adresu web-stranice.
-
-## Tehnologije
-HTML, CSS i JavaScript.
+Uploadaj `index.html`, `style.css` i `app.js` u root repozitorija. GitHub Pages može posluživati projekt kao statičku stranicu. Za Three.js koristi se CDN pa je za 3D prikaz potrebna internetska veza.

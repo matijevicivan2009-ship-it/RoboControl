@@ -1,28 +1,19 @@
-const c=document.getElementById("robot"),ctx=c.getContext("2d");
-const $=id=>document.getElementById(id);
-const base=$("base"),shoulder=$("shoulder"),elbow=$("elbow"),grip=$("grip");
-let demoTimer=null,saved=[]; const rad=d=>d*Math.PI/180;
-function line(x1,y1,x2,y2,w=18,color="#55bfff"){ctx.strokeStyle=color;ctx.lineWidth=w;ctx.lineCap="round";ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke()}
-function joint(x,y,r=13){ctx.fillStyle="#f3f8ff";ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();ctx.fillStyle="#397fff";ctx.beginPath();ctx.arc(x,y,r/2,0,Math.PI*2);ctx.fill()}
-function draw(){
- const b=+base.value,a1=+shoulder.value+b*.15,a2=+elbow.value;
- $("baseVal").textContent=b+"°";$("shoulderVal").textContent=shoulder.value+"°";$("elbowVal").textContent=elbow.value+"°";$("gripVal").textContent=grip.value+"%";
- ctx.clearRect(0,0,c.width,c.height);ctx.strokeStyle="#102038";ctx.lineWidth=1;
- for(let x=20;x<c.width;x+=30){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,c.height);ctx.stroke()}
- for(let y=20;y<c.height;y+=30){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(c.width,y);ctx.stroke()}
- const ox=360,oy=475,L1=190,L2=160,t1=rad(-a1),t2=rad(-(a1+a2));
- const x1=ox+L1*Math.cos(t1),y1=oy+L1*Math.sin(t1),x2=x1+L2*Math.cos(t2),y2=y1+L2*Math.sin(t2);
- ctx.fillStyle="#26354c";ctx.fillRect(275,482,170,28);ctx.fillRect(315,445,90,40);
- line(ox,oy,x1,y1,24);line(x1,y1,x2,y2,19);joint(ox,oy,17);joint(x1,y1,14);joint(x2,y2,10);
- const open=9+(+grip.value)*.24,nx=-Math.sin(t2),ny=Math.cos(t2),gx=Math.cos(t2),gy=Math.sin(t2),px=x2+18*gx,py=y2+18*gy;
- line(x2,y2,px,py,9);line(px+nx*open,py+ny*open,px+gx*34+nx*open,py+gy*34+ny*open,6);line(px-nx*open,py-ny*open,px+gx*34-nx*open,py+gy*34-ny*open,6);
- const X=x2-ox,Y=oy-y2;$("xPos").textContent=X.toFixed(1);$("yPos").textContent=Y.toFixed(1);$("reach").textContent=Math.hypot(X,Y).toFixed(1);
-}
-[base,shoulder,elbow,grip].forEach(e=>e.addEventListener("input",draw));
-$("open").onclick=()=>{grip.value=100;draw()};$("close").onclick=()=>{grip.value=0;draw()};
-$("reset").onclick=()=>{stopDemo();base.value=0;shoulder.value=55;elbow.value=55;grip.value=40;draw()};
-function stopDemo(){if(demoTimer){clearInterval(demoTimer);demoTimer=null;$("demo").textContent="▶ Demo pokret"}}
-$("demo").onclick=()=>{if(demoTimer){stopDemo();return} $("demo").textContent="■ Zaustavi demo";let t=0;demoTimer=setInterval(()=>{t+=.06;base.value=30*Math.sin(t*.7);shoulder.value=72+35*Math.sin(t);elbow.value=45+65*Math.sin(t*1.2);grip.value=50+45*Math.sin(t*.8);draw()},40)};
-$("save").onclick=()=>{saved.push({b:+base.value,s:+shoulder.value,e:+elbow.value,g:+grip.value});renderSaved()};
-function renderSaved(){const box=$("savedPositions");box.innerHTML="";saved.forEach((p,i)=>{const r=document.createElement("div");r.className="saved-row";r.innerHTML=`<span>Položaj ${i+1}: ${p.s}° / ${p.e}°</span><button>Učitaj</button>`;r.querySelector("button").onclick=()=>{base.value=p.b;shoulder.value=p.s;elbow.value=p.e;grip.value=p.g;draw()};box.appendChild(r)})}
-draw();
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+const $=id=>document.getElementById(id), base=$('base'),shoulder=$('shoulder'),elbow=$('elbow'),grip=$('grip');let demoTimer=null,saved=[];
+const host=$('robot3d'),scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(42,1,.1,100),renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;host.appendChild(renderer.domElement);
+camera.position.set(7,5.3,8.5);const orbit=new OrbitControls(camera,renderer.domElement);orbit.enableDamping=true;orbit.target.set(0,2.4,0);orbit.minDistance=5;orbit.maxDistance=15;
+scene.add(new THREE.HemisphereLight(0xbfe2ff,0x17202c,2.2));const key=new THREE.DirectionalLight(0xffffff,4);key.position.set(5,9,6);key.castShadow=true;scene.add(key);const fill=new THREE.DirectionalLight(0x4b9cff,2);fill.position.set(-5,4,-3);scene.add(fill);
+const grid=new THREE.GridHelper(12,24,0x315a82,0x193047);scene.add(grid);const axes=new THREE.AxesHelper(2.2);axes.position.y=.03;scene.add(axes);
+const floor=new THREE.Mesh(new THREE.CircleGeometry(6,64),new THREE.MeshStandardMaterial({color:0x0a1420,roughness:.9,metalness:.1}));floor.rotation.x=-Math.PI/2;floor.position.y=-.02;floor.receiveShadow=true;scene.add(floor);
+const orange=new THREE.MeshStandardMaterial({color:0xff7a00,metalness:.5,roughness:.28}), dark=new THREE.MeshStandardMaterial({color:0x111820,metalness:.8,roughness:.25}), metal=new THREE.MeshStandardMaterial({color:0x718096,metalness:.85,roughness:.2});
+function mesh(g,m){const x=new THREE.Mesh(g,m);x.castShadow=x.receiveShadow=true;return x}function cyl(r,h,m=orange){const x=mesh(new THREE.CylinderGeometry(r,r,h,40),m);return x}function box(x,y,z,m=orange){return mesh(new THREE.BoxGeometry(x,y,z),m)}
+const robot=new THREE.Group();scene.add(robot);const basePed=cyl(.75,.32,dark);basePed.position.y=.16;robot.add(basePed);const baseTop=cyl(.6,.22,orange);baseTop.position.y=.43;robot.add(baseTop);
+const yaw=new THREE.Group();yaw.position.y=.54;robot.add(yaw);const shoulderHousing=cyl(.48,.72,orange);shoulderHousing.rotation.z=Math.PI/2;shoulderHousing.position.y=.36;yaw.add(shoulderHousing);const shoulderPivot=new THREE.Group();shoulderPivot.position.y=.36;yaw.add(shoulderPivot);
+const L1=2.65,L2=2.25;const upper=box(.48,L1,.62);upper.position.y=L1/2;shoulderPivot.add(upper);const shoulderCap=cyl(.39,.68,dark);shoulderCap.rotation.z=Math.PI/2;shoulderPivot.add(shoulderCap);
+const elbowPivot=new THREE.Group();elbowPivot.position.y=L1;shoulderPivot.add(elbowPivot);const elbowCap=cyl(.36,.7,dark);elbowCap.rotation.z=Math.PI/2;elbowPivot.add(elbowCap);const fore=box(.42,L2,.55);fore.position.y=L2/2;elbowPivot.add(fore);
+const wrist=new THREE.Group();wrist.position.y=L2;elbowPivot.add(wrist);const wristBody=cyl(.3,.65,orange);wristBody.rotation.z=Math.PI/2;wrist.add(wristBody);const palm=box(.7,.42,.45,dark);palm.position.y=.42;wrist.add(palm);const leftFinger=box(.16,.8,.18,metal),rightFinger=box(.16,.8,.18,metal);leftFinger.position.y=1;rightFinger.position.y=1;wrist.add(leftFinger,rightFinger);const tip=new THREE.Object3D();tip.position.y=1.45;wrist.add(tip);
+function resize(){const w=host.clientWidth,h=host.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()}new ResizeObserver(resize).observe(host);resize();
+function update(){const b=THREE.MathUtils.degToRad(+base.value),s=THREE.MathUtils.degToRad(+shoulder.value-90),e=THREE.MathUtils.degToRad(+elbow.value);yaw.rotation.y=b;shoulderPivot.rotation.z=-s;elbowPivot.rotation.z=-e;const gap=.18+(+grip.value/100)*.34;leftFinger.position.x=-gap;rightFinger.position.x=gap;leftFinger.rotation.z=-.12;rightFinger.rotation.z=.12;$('baseVal').textContent=base.value+'°';$('shoulderVal').textContent=shoulder.value+'°';$('elbowVal').textContent=elbow.value+'°';$('gripVal').textContent=grip.value+'%';scene.updateMatrixWorld(true);const p=new THREE.Vector3();tip.getWorldPosition(p);const scale=100;$('xPos').textContent=(p.x*scale).toFixed(1)+' mm';$('yPos').textContent=(p.y*scale).toFixed(1)+' mm';$('zPos').textContent=(p.z*scale).toFixed(1)+' mm';$('reach').textContent=(Math.hypot(p.x,p.y-.54,p.z)*scale).toFixed(1)+' mm'}
+[base,shoulder,elbow,grip].forEach(x=>x.addEventListener('input',update));$('open').onclick=()=>{grip.value=100;update()};$('close').onclick=()=>{grip.value=0;update()};function stopDemo(){if(demoTimer){clearInterval(demoTimer);demoTimer=null;$('demo').textContent='▶ Demo pokret'}}$('reset').onclick=()=>{stopDemo();base.value=0;shoulder.value=55;elbow.value=55;grip.value=40;update();camera.position.set(7,5.3,8.5);orbit.target.set(0,2.4,0)};$('demo').onclick=()=>{if(demoTimer){stopDemo();return}$('demo').textContent='■ Zaustavi demo';let t=0;demoTimer=setInterval(()=>{t+=.055;base.value=75*Math.sin(t*.65);shoulder.value=78+38*Math.sin(t);elbow.value=15+70*Math.sin(t*1.15);grip.value=50+45*Math.sin(t*.8);update()},40)};$('save').onclick=()=>{saved.push({b:+base.value,s:+shoulder.value,e:+elbow.value,g:+grip.value});renderSaved()};function renderSaved(){const box=$('savedPositions');box.innerHTML='';saved.forEach((p,i)=>{const r=document.createElement('div');r.className='saved-row';r.innerHTML=`<span>P${i+1}: B ${p.b}° • R ${p.s}° • L ${p.e}°</span><button>Učitaj</button>`;r.querySelector('button').onclick=()=>{base.value=p.b;shoulder.value=p.s;elbow.value=p.e;grip.value=p.g;update()};box.appendChild(r)})}
+function animate(){requestAnimationFrame(animate);orbit.update();renderer.render(scene,camera)}update();animate();
